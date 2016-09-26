@@ -1,0 +1,45 @@
+plugins { id 'com.github.lkishalmi.gatling' version '0.3.1' }
+
+ext {
+    scalaVersion = '2.11.8'
+    scalaBuildVersion = '2.11'
+    scalazVersion = '7.2.4'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+gatling {
+    toolVersion = '2.2.2'
+}
+
+task resolveGatlingParameters {
+    group 'Gatling'
+    description 'Resolves configuration parameters required by Gatling simulations'
+    doLast {
+        def baseUrl = project.hasProperty('targetBaseUrl') ? project.property('targetBaseUrl') :
+                "http://stencil.eng.dev.outfra.xyz"
+        gatling.jvmArgs += [
+                "-Dbase_url=${baseUrl}",
+                "-Dramp_users_per_sec_from=${rampUsersPerSecFrom}",
+                "-Dramp_users_per_sec_to=${rampUsersPerSecTo}",
+                "-Dramp_users_per_sec_during=${rampUsersPerSecDuring}",
+                "-Dconstant_users_per_sec=${constantUsersPerSec}",
+                "-Dconstant_users_per_sec_during=${constantUsersPerSecDuring}"
+        ]
+    }
+}
+
+// Non-standard dependency wiring due to the way that the Gatling plugin applies its task
+project.afterEvaluate { p -> p.getTasksByName('gatling', true).head().dependsOn resolveGatlingParameters }
+
+dependencies {
+    gatlingCompile "org.scala-lang:scala-library:${scalaVersion}"
+    gatlingCompile "com.typesafe:config:1.3.0"
+    gatlingCompile "org.scalaz:scalaz-core_${scalaBuildVersion}:${scalazVersion}"
+    gatlingCompile "org.scalaz:scalaz-concurrent_${scalaBuildVersion}:${scalazVersion}"
+    gatlingCompile "org.jliszka:probability-monad_${scalaBuildVersion}:1.0.1"
+}
