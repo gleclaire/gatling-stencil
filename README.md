@@ -14,5 +14,3 @@ The following command demonstrates running a performance test against `http://my
                 -PconstantUsersPerSecDuring=5minutes \
                 -PtargetBaseUrl=http://myservice:8080
 ```
-
-TODO:
