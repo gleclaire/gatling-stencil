@@ -8,7 +8,7 @@ import probability_monad.Distribution
 
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
-object StencilSimulation {
+object StencilSimulation extends LazyLogging {
   implicit def asScalaDuration(d: java.time.Duration): FiniteDuration = Duration.fromNanos(d.toNanos)
 
   case class Config(baseUrl: String,
